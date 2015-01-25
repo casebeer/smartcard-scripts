@@ -1,0 +1,6 @@
+*.swp
+*.pem
+*.cert
+*.pub
+*.key
+*.csr
