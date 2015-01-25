@@ -1,8 +1,11 @@
 #!/bin/bash
 
+# From https://www.youtube.com/watch?v=fBlsmbhMPok
+
 export SC=/Library/OpenSC/lib/opensc-pkcs11.so
 #YPT=yubico-piv-tool
 YPT=./tool/bin/yubico-piv-tool
+YPT=../../bin/yubico-piv-tool
 
 echo "Resetting CHUID..."
 $YPT -s 9a -a set-chuid
