@@ -4,6 +4,9 @@
 # Examples of PEM RSA private keys are:
 # - ssh client private key files and
 # - the output of openssl genrsa -out key.pem 2048
+#
+# Based on Kevin McArthur's instructions at https://www.youtube.com/watch?v=fBlsmbhMPok
+#
 
 KEY=$1
 TOOL=yubico-piv-tool
