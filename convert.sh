@@ -26,7 +26,10 @@ if [ $? -neq 0 ]; then
 fi
 
 echo "Generating self signed certificate..."
-openssl rsa -in $KEY -pubout | tee $OUTPUT_CERT_FILE | $TOOL -s $SLOT -S "${DN}" -P $PIN -a verify -a selfsign | pbcopy
+openssl rsa -in $KEY -pubout |\
+	tee $OUTPUT_CERT_FILE |\
+	$TOOL -s $SLOT -S "${DN}" -P $PIN -a verify -a selfsign |\
+	pbcopy
 
 if [ $? -neq 0 ]; then
 	echo "Failed to generate self signed certificate. Exiting."
