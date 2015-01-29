@@ -55,17 +55,19 @@ function _gpg_agent_kill {
 }
 
 ## match symlink to gpg-agent status without starting or stopping it
-function gpg-agent-noop {
+function gpg-agent-link-socket {
 	pgrep -U $UID gpg-agent > /dev/null
 
 	if [ $? -eq 0 ]; then
 		# gpg-agent running
 		# symlink SSH_AUTH_SOCK to .gnupg version
 		ln -fs ~/.gnupg/S.gpg-agent.ssh ~/.ssh-auth-sock
+		[[ "$1" == "-verbose" ]] && echo "gpg-agent is running." > /dev/stderr
 	else
 		# gpg-agent not running, use system ssh-agent
 		# symlink SSH_AUTH_SOCK to launchct getenv versino
 		ln -fs $(launchctl getenv SSH_AUTH_SOCK) ~/.ssh-auth-sock
+		[[ "$1" == "-verbose" ]] && echo "gpg-agent is not running." > /dev/stderr
 	fi
 }
 
@@ -77,8 +79,7 @@ function gpg-agent-up {
 	# start new agent
 	ENV_VARS=$(gpg-agent --daemon -s --enable-ssh-support --use-standard-socket)
 
-	# symlink SSH_AUTH_SOCK to .gnupg version
-	ln -fs ~/.gnupg/S.gpg-agent.ssh ~/.ssh-auth-sock
+	gpg-agent-link-socket
 }
 
 ## DOWN
@@ -86,8 +87,11 @@ function gpg-agent-down {
 	# kill old agent
 	_gpg_agent_kill
 
-	# symlink SSH_AUTH_SOCK to launchct getenv versino
-	ln -fs $(launchctl getenv SSH_AUTH_SOCK) ~/.ssh-auth-sock
+	gpg-agent-link-socket
 }
 
-gpg-agent-noop
+function gpg-agent-status {
+	gpg-agent-link-socket -verbose
+}
+
+gpg-agent-link-socket
