@@ -15,9 +15,6 @@ DN='/CN=Smartcard Certificate/'
 OUTPUT_CERT_FILE=cert.pem
 PIN=123456
 
-#openssl req  -new -days 8000 -key $KEY -out csr.pem
-#openssl x509 -req -days 8000 -in csr.pem -signkey $KEY -out cert.pem
-
 read -p "Enter smartcard PIN: " -s PIN
 
 echo "Importing private key to smartcard slot $SLOT..."
@@ -30,7 +27,6 @@ fi
 
 echo "Generating self signed certificate..."
 openssl rsa -in $KEY -pubout | tee $OUTPUT_CERT_FILE | $TOOL -s $SLOT -S "${DN}" -P $PIN -a verify -a selfsign | pbcopy
-#echo $?
 
 if [ $? -neq 0 ]; then
 	echo "Failed to generate self signed certificate. Exiting."
@@ -41,7 +37,6 @@ echo "Certificate saved in $OUTPUT_CERT_FILE"
 
 echo "Deleting old certificate from smartcard slot $SLOT..."
 pbpaste | $TOOL -s $SLOT -a delete-certificate
-#echo $?
 
 if [ $? -neq 0 ]; then
 	echo "Failed to delete old certificate from smartcard. Exiting."
@@ -50,12 +45,9 @@ fi
 
 echo "Importing certificate to smartcard slot $SLOT..."
 pbpaste | $TOOL -s $SLOT -a import-certificate
-#echo $?
 
 if [ $? -neq 0 ]; then
 	echo "Failed to load new certificate to smartcard. Exiting."
 	exit 4
 fi
-
-#cat cert.pem | $TOOL -s $SLOT -a import-certificate
 
